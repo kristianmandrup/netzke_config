@@ -62,8 +62,8 @@ class NetzkeConfig < Thor::Group
     mconfig = modules_config[name] = {}
     if options[name]
       configs = options[name].split('@')      
-      mconfig[:branch] = configs[0] || module_options[:branch] || options[:branch]
-      mconfig[:account] = configs[1] || module_options[:branch] || options[:account]
+      mconfig[:branch]  = module_options[:branch] || configs[0] || options[:branch]
+      mconfig[:account] = module_options[:branch] || configs[1] || options[:account]
     end         
   end
 
@@ -89,6 +89,7 @@ class NetzkeConfig < Thor::Group
     create_module_container_dir  
     inside "#{location}" do
       get_module_names.each do |module_name|
+        puts "handle module: #{module_name}"
         get_module module_name
         config_netzke_plugin module_name
       end        
