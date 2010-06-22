@@ -29,7 +29,7 @@ class NetzkeConfig < Thor::Group
   protected
 
   def check_valid_context
-    if !File.directory? 'lib/netzke' && !File.exist? 'Gemfile'
+    if netzke_app? && rails3_app?
       say "Must be run from a Netzke rails3 application root directory", :red
       exit -1
     end
@@ -98,6 +98,14 @@ class NetzkeConfig < Thor::Group
   end
 
   private
+
+  def netzke_app?
+    File.directory? 'lib/netzke'
+  end
+
+  def rails3_app?
+    File.exist? 'Gemfile'
+  end
 
   def local_module_src module_name
     "#{options[:location]}/#{module_name}"
