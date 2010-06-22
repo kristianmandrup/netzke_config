@@ -18,7 +18,7 @@ class NetzkeConfig < Thor::Group
   class_option :overwrite_all, :type => :boolean, :default => false, :desc => 'force overwrite of all files, including existing modules and links'
   class_option :overwrite_links, :type => :boolean, :default => true, :desc => 'force overwrite of symbolic links'
 
-  GITHUB = 'http://github.com/skozlov'
+  GITHUB = 'http://github.com'
 
   def main
     exit(-1) if !valid_context?
