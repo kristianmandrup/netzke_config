@@ -52,7 +52,10 @@ class NetzkeConfig < Thor::Group
 
   def setup_defaults       
     @modules_config ||= {} 
-    @module_specifications = default_module_specs << options[:modules] || ""
+    all_modules = []         
+    all_modules << default_module_specs 
+    all_modules << options[:modules]
+    @module_specifications = all_modules.join(',') || ""
   end
 
   def define_modules
