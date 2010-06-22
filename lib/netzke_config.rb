@@ -51,10 +51,9 @@ class NetzkeConfig < Thor::Group
   def setup_defaults       
     @modules_config ||= {} 
     all_modules = []         
-    all_modules << default_module_specs 
+    all_modules << default_module_specs if default_module_specs && !default_module_specs.empty?
     all_modules << options[:modules]
     @module_specifications = all_modules.join(',') || ""
-    module_specifications.chomp! if module_specifications[0] == ','
   end
 
   def define_modules
