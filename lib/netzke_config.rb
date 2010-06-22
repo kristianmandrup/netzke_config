@@ -28,7 +28,7 @@ class NetzkeConfig < Thor::Group
   GITHUB = 'http://github.com'
 
   def main  
-    define_vars
+    setup_defaults
     define_modules
     exit(-1) if !valid_context?
     configure_modules
@@ -38,10 +38,16 @@ class NetzkeConfig < Thor::Group
   protected
   attr_accessor :modules_config
 
-  def define_vars       
+  def default_modules 
+    ["netzke-core", "netzke-basepack"]    
+  end
+
+  def setup_defaults       
     @modules_config ||= {}
-    set_module_config 'netzke-basepack'
-    set_module_config 'netzke-core' 
+    default_modules.each do |module_name|
+      set_module_config 'netzke-basepack'
+      set_module_config 'netzke-core' 
+    end
   end
 
   def define_modules
@@ -58,20 +64,12 @@ class NetzkeConfig < Thor::Group
   end
 
   def set_module_config name, module_options = {}
-    puts "set_module_config: #{name}, #{module_options.inspect}"
     mconfig = modules_config[name.to_sym] = {}
-#    if options[name]
-      # configs = options[:"netzke-#{name}"].split('@')      
-      # mconfig[:branch]  = module_options[:branch] || configs[0] || options[:branch]
-      # mconfig[:account] = module_options[:branch] || configs[1] || options[:account]
-
-      mconfig[:branch]  = module_options[:branch] || options[:branch]
-      mconfig[:account] = module_options[:account] || options[:account]
-#    end         
+    mconfig[:branch]  = module_options[:branch] || options[:branch]
+    mconfig[:account] = module_options[:account] || options[:account]
   end
 
   def module_config name 
-    puts "module_config: #{name}, #{modules_config.inspect}"
     modules_config[name.to_sym]
   end
   
@@ -85,7 +83,7 @@ class NetzkeConfig < Thor::Group
   end
 
   def get_module_names
-    ["netzke-core", "netzke-basepack"] | modules_config.keys.map{|k| k.to_s}    
+    default_modules | modules_config.keys.map{|k| k.to_s}    
   end
   
   def configure_modules  

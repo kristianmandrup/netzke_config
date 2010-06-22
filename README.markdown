@@ -48,6 +48,9 @@ Retrieves and places *netzke* modules in <code>../my/place</code>.
 
 <code>$ netzke_config --overwrite-all --extjs ~/code/ext-3.2.1/ --download</code>
 
++Detailed specifications of each module to include as plugin+
+
+<code>$ netzke_config --modules neztke_ar:master@skozlov,netzke_core:rails3@kmandrup</code>
 
 ## Copyright ##
 
