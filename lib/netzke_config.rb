@@ -12,11 +12,11 @@ class NetzkeConfig < Thor::Group
   argument :location, :type => :string, :default => '~/netzke/modules', :desc => 'location where netzke modules are stored' 
   # argument :my_arg_name, :type (:string, :hash, :array, :numeric), :default, :required, :optional, :desc, :banner
 
-  class_option :extjs, :type => :string, :default => nil, :desc => 'location of ExtJS 3.x.x library', :optional => true
+  class_option :extjs, :type => :string, :default => nil, :desc => 'location of ExtJS 3.x.x library'
 
-  class_option :account, :type => :string, :default => 'skozlov', :desc => 'Github account to get Netzke plugins from', :optional => true
-  class_option :overwrite_all, :type => :boolean, :default => false, :desc => 'force overwrite of all files, including existing modules and links', :optional => true
-  class_option :overwrite_links, :type => :boolean, :default => true, :desc => 'force overwrite of symbolic links', :optional => true  
+  class_option :account, :type => :string, :default => 'skozlov', :desc => 'Github account to get Netzke plugins from'
+  class_option :overwrite_all, :type => :boolean, :default => false, :desc => 'force overwrite of all files, including existing modules and links'
+  class_option :overwrite_links, :type => :boolean, :default => true, :desc => 'force overwrite of symbolic links'
 
   GITHUB = 'http://github.com/skozlov'
 
@@ -49,14 +49,14 @@ class NetzkeConfig < Thor::Group
 
   def create_module_container_dir
     if File.directory?(location)
-      FileUtils.rm_rf location if options[:overwrite_all] 
-      return
+      run "rm -rf #{location}" if options[:overwrite_all]      
     end
-    empty_directory "#{location}"
+    empty_directory "#{location}" if !File.directory?(location)
   end
 
 
-  def get_module module_name
+  def get_module module_name   
+    run "rm -rf #{module_name}" if options[:overwrite_all]    
     if File.directory? module_name
       update_module module_name
     else
