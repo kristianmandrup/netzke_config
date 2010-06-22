@@ -14,7 +14,8 @@ class NetzkeConfig < Thor::Group
 
   class_option :extjs, :type => :string, :desc => 'location of extjs', :optional => true
 
-  class_option :overwrite, :type => :boolean, :default => false, :desc => 'force overwrite of existing modules if present', :optional => true
+  class_option :overwrite_all, :type => :boolean, :default => false, :desc => 'force overwrite of all files, including existing modules and links', :optional => true
+  class_option :overwrite_links, :type => :boolean, :default => false, :desc => 'force overwrite of symbolic links', :optional => true  
 
   NETKE_GITHUB = 'http://github.com/skozlov'
 
@@ -47,7 +48,7 @@ class NetzkeConfig < Thor::Group
 
   def create_module_container_dir
     if File.directory?(location)
-      FileUtils.rm_rf location if options[:overwrite] 
+      FileUtils.rm_rf location if options[:overwrite_all] 
       return
     end
     empty_directory "#{location}"
@@ -80,7 +81,8 @@ class NetzkeConfig < Thor::Group
 
   def config_netzke_plugin module_name
     inside 'vendor/plugins' do
-      module_src = local_module_src(module_name)
+      module_src = local_module_src(module_name) 
+      run "rm -f #{module_name}" if options[:overwrite_links]
       run "ln -s #{module_src} #{module_name}"
     end
   end
@@ -97,7 +99,8 @@ class NetzkeConfig < Thor::Group
           return
         end
       end
-      inside 'public' do    
+      inside 'public' do     
+        run "rm -f extjs" if options[:overwrite_links]        
         run "ln -s #{extjs_dir} extjs"    
       end
     end
