@@ -21,14 +21,14 @@ class NetzkeConfig < Thor::Group
   class_option :ext_version, :type => :string, :default => '3.2.1', :desc => 'ExtJS version to download'
   class_option :download, :type => :boolean, :default => false, :desc => 'Download ExtJS if not found in specified extjs location'
 
-  class_option :basepack, :type => :string, :desc => 'Github branch and account specification for basepack module, fx rails3@kmandrup'
-  class_option :core, :type => :string, :desc => 'Github branch and account specification for core module, fx master@skozlov'
+  # class_option :basepack, :type => :string, :desc => 'Github branch and account specification for basepack module, fx rails3@kmandrup'
+  # class_option :core, :type => :string, :desc => 'Github branch and account specification for core module, fx master@skozlov'
   class_option :modules, :type => :string, :desc => 'module specifications for each module, fx neztke_ar:master@skozlov,netzke_core:rails3@kmandrup'
 
   GITHUB = 'http://github.com'
 
   def main  
-    define_vars
+    # define_vars
     define_modules
     exit(-1) if !valid_context?
     configure_modules
@@ -38,11 +38,11 @@ class NetzkeConfig < Thor::Group
   protected
   attr_accessor :modules_config
 
-  def define_vars       
-    @modules_config ||= {}
-    set_module_config :basepack 
-    set_module_config :core 
-  end
+  # def define_vars       
+  #   @modules_config ||= {}
+  #   set_module_config :basepack 
+  #   set_module_config :core 
+  # end
 
   def define_modules
     @modules_config ||= {}
@@ -61,9 +61,12 @@ class NetzkeConfig < Thor::Group
     puts "set_module_config: #{name}, #{module_options.inspect}"
     mconfig = modules_config[name] = {}
     if options[name]
-      configs = options["netzke-#{name}"].split('@')      
-      mconfig[:branch]  = module_options[:branch] || configs[0] || options[:branch]
-      mconfig[:account] = module_options[:branch] || configs[1] || options[:account]
+      # configs = options[:"netzke-#{name}"].split('@')      
+      # mconfig[:branch]  = module_options[:branch] || configs[0] || options[:branch]
+      # mconfig[:account] = module_options[:branch] || configs[1] || options[:account]
+
+      mconfig[:branch]  = module_options[:branch] || options[:branch]
+      mconfig[:account] = module_options[:account] || options[:account]
     end         
   end
 
