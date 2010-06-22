@@ -40,8 +40,8 @@ class NetzkeConfig < Thor::Group
 
   def define_vars       
     @modules_config ||= {}
-    set_module_config :netzke_basepack
-    set_module_config :core 
+    set_module_config 'netzke-basepack'
+    set_module_config 'netzke-core' 
   end
 
   def define_modules
@@ -52,14 +52,14 @@ class NetzkeConfig < Thor::Group
     module_defs.each do |module_spec|
       spec = module_spec.strip.split(":")
       module_name = spec[0] 
-      branch, account = spec[1].split("@")            
+      branch, account = spec[1].spl it("@")            
       set_module_config module_name.to_sym, :branch => branch, :account => account
     end
   end
 
   def set_module_config name, module_options = {}
     puts "set_module_config: #{name}, #{module_options.inspect}"
-    mconfig = modules_config[name] = {}
+    mconfig = modules_config[name.to_sym] = {}
 #    if options[name]
       # configs = options[:"netzke-#{name}"].split('@')      
       # mconfig[:branch]  = module_options[:branch] || configs[0] || options[:branch]
