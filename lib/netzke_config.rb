@@ -52,14 +52,14 @@ class NetzkeConfig < Thor::Group
 
   def create_module_container_dir
     if File.directory?(location)
-      run "rm -rf #{location}" if options[:force_all]      
+      run "rm -rf #{location}" if force_all?
     end
     empty_directory "#{location}" if !File.directory?(location)
   end
 
 
   def get_module module_name   
-    run "rm -rf #{module_name}" if options[:force_all]    
+    run "rm -rf #{module_name}" if force_all?
     if File.directory? module_name
       update_module module_name
     else
@@ -86,7 +86,7 @@ class NetzkeConfig < Thor::Group
   def config_netzke_plugin module_name
     inside 'vendor/plugins' do
       module_src = local_module_src(module_name) 
-      run "rm -f #{module_name}" if options[:force_links]
+      run "rm -f #{module_name}" if force_links?
       run "ln -s #{module_src} #{module_name}"
     end
   end
@@ -95,7 +95,7 @@ class NetzkeConfig < Thor::Group
     extjs_dir = options[:extjs]
     if !File.directory? extjs_dir
       say "No directory for extjs found at #{extjs_dir}", :red        
-      extjs_dir = download_extjs if options[:download]
+      extjs_dir = download_extjs if download?
     end      
     
     return if !File.directory(extjs_dir)
@@ -107,12 +107,28 @@ class NetzkeConfig < Thor::Group
       end
     end
     inside 'public' do     
-      run "rm -f extjs" if options[:force_links]        
+      run "rm -f extjs" if force_links?        
       run "ln -s #{extjs_dir} extjs"    
     end
   end
 
   private
+
+  def download?
+    options[:download]    
+  end
+
+  def force_all?
+    options[:force_all]
+  end    
+
+  def force_links?
+    options[:force_links]
+  end    
+
+  def branch
+    options[:branch]
+  end
 
   def download_extjs 
     extjs_dir = options[:extjs]

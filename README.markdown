@@ -22,7 +22,13 @@ Must be run frokm the root of a Rails 3 Netzke application.
 
 <code>$ netzke_config</code>
 
-Retrieves and places *netzke* modules in <code>~/netzke/modules</code>.
+Clones *netzke* modules from 'skozlov' github account in <code>~/netzke/modules</code>.
+
++Clone modules from specific github account+
+
+<code>$ netzke_config --account kmandrup</code>
+
+Clones *netzke* modules from 'kmandrup' github account in <code>~/netzke/modules</code>.
 
 +Specify location of netzke modules+
 
