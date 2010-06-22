@@ -28,7 +28,7 @@ class NetzkeConfig < Thor::Group
   GITHUB = 'http://github.com'
 
   def main  
-    # define_vars
+    define_vars
     define_modules
     exit(-1) if !valid_context?
     configure_modules
@@ -38,11 +38,11 @@ class NetzkeConfig < Thor::Group
   protected
   attr_accessor :modules_config
 
-  # def define_vars       
-  #   @modules_config ||= {}
-  #   set_module_config :basepack 
-  #   set_module_config :core 
-  # end
+  def define_vars       
+    @modules_config ||= {}
+    set_module_config :netzke_basepack
+    set_module_config :core 
+  end
 
   def define_modules
     @modules_config ||= {}
