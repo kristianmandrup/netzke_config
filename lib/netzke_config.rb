@@ -15,7 +15,7 @@ class NetzkeConfig < Thor::Group
   # group :netzke
 
   # Define arguments 
-  argument :location, :type => :string, :default => '~/netzke/modules', :desc => 'Location where netzke modules are to be stored (locally)' 
+  argument :location, :type => :string, :default => '~/netzke/plugin-modules', :desc => 'Location where netzke modules are to be stored (locally)' 
   # argument :my_arg_name, :type (:string, :hash, :array, :numeric), :default, :required, :optional, :desc, :banner
 
   class_option :extjs, :type => :string, :default => nil, :desc => 'Location of ExtJS 3.x.x library'
