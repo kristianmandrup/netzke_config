@@ -21,8 +21,6 @@ class NetzkeConfig < Thor::Group
   class_option :ext_version, :type => :string, :default => '3.2.1', :desc => 'ExtJS version to download'
   class_option :download, :type => :boolean, :default => false, :desc => 'Download ExtJS if not found in specified extjs location'
 
-  # class_option :basepack, :type => :string, :desc => 'Github branch and account specification for basepack module, fx rails3@kmandrup'
-  # class_option :core, :type => :string, :desc => 'Github branch and account specification for core module, fx master@skozlov'
   class_option :modules, :type => :string, :desc => 'Module specifications for each module, fx neztke_ar:master@skozlov,netzke_core:rails3@kmandrup'
   class_option :config_file, :default => '~/netzke/modules.config', :type => :string, :desc => 'Location of config file for default module specifications' 
 
@@ -91,10 +89,6 @@ class NetzkeConfig < Thor::Group
       say "Must be run from a rails 3 application root directory", :red      
       return false
     end      
-    if !netzke_app?
-      say "Not sure if this is a netzke application root directory. lib/netzke missing", :yellow      
-      return true
-    end
     true
   end
 
@@ -207,10 +201,6 @@ class NetzkeConfig < Thor::Group
   def github account
     "#{GITHUB}/#{account}"
   end  
-
-  def netzke_app?
-    File.directory? 'lib/netzke'
-  end
 
   def rails3_app?
     File.exist? 'Gemfile'

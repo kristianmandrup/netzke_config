@@ -52,6 +52,26 @@ Retrieves and places *netzke* modules in <code>../my/place</code>.
 
 <code>$ netzke_config --modules neztke_ar:master@skozlov,netzke_core:rails3@kmandrup</code>
 
++Using config file for default modules specifications+
+     
+*~/netzke/modules.config* (default config file)
+<pre>
+netzke_core:rails3@kmandrup
+</pre>
+
+<code>$ netzke_config --modules neztke_ar:master@skozlov</code>
+
++Specifying custom config file for default modules specifications+
+     
+*~/configurations/modules.config* (default config file)
+<pre>
+netzke-core:rails3@kmandrup, neztke-basepack:rails3@skozlov 
+</pre>
+
+Modules specs in the modules option always override those found in the config file
+
+<code>$ netzke_config --modules neztke_ar:master@skozlov,neztke-basepack:rails3@kmandrup --config-file ~/configurations/modules.config</code>
+
 ## Copyright ##
 
 Copyright (c) 2009 Kristian Mandrup
