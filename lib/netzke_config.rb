@@ -2,6 +2,12 @@ require 'active_support/inflector'
 require 'thor'
 require 'thor/group'
 
+class NilClass
+  def empty?
+    true
+  end
+end
+
 class NetzkeConfig < Thor::Group
   include Thor::Actions
 
@@ -43,8 +49,7 @@ class NetzkeConfig < Thor::Group
     config_file = options[:config_file] 
     config_file.gsub! /^~/, ENV['HOME']
     if File.exists?(config_file)
-      default_module_specs = File.open(config_file).read 
-      puts "default_module_specs: '#{default_module_specs}'"
+      @default_module_specs = File.open(config_file).read 
     else
       say "module config file at #{config_file} not found"
     end
@@ -52,16 +57,17 @@ class NetzkeConfig < Thor::Group
 
   def setup_defaults       
     @modules_config ||= {} 
+    puts "default_module_specs: '#{default_module_specs}'"
     all_modules = []         
-    all_modules.concat(default_module_specs) if default_module_specs && !default_module_specs.empty?
-    all_modules.concat(options[:modules]) if options[:modules]
+    all_modules << default_module_specs if !default_module_specs.empty?
+    all_modules << options[:modules] if options[:modules]
     puts "all modules: #{all_modules}"
     @module_specifications = all_modules.join(',') || ""
   end
 
   def define_modules
     @modules_config ||= {}
-    return if !module_specifications || module_specifications.empty?
+    return if module_specifications.empty?
     
     puts "module_specifications: #{module_specifications}"
     module_defs = module_specifications.split(",")
