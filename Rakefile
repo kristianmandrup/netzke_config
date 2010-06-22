@@ -5,8 +5,8 @@ begin
   require 'jeweler'
   Jeweler::Tasks.new do |gem|
     gem.name = "netzke_config"
-    gem.summary = %Q{TODO: one-line summary of your gem}
-    gem.description = %Q{TODO: longer description of your gem}
+    gem.summary = %Q{Configure a Netzke app for Netzke development and debuging}
+    gem.description = %Q{Configure Netzke modules as plugins for a Netzke app and link ExtJS library to boot}
     gem.email = "kmandrup@gmail.com"
     gem.homepage = "http://github.com/kristianmandrup/netzke_config"
     gem.authors = ["Kristian Mandrup"]
