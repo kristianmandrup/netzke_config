@@ -90,7 +90,6 @@ class NetzkeConfig < Thor::Group
     create_module_container_dir  
     inside "#{location}" do
       get_module_names.each do |module_name|
-        puts "handle module: #{module_name}"
         get_module module_name
         config_netzke_plugin module_name
       end        
