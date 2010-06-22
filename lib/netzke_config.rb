@@ -14,10 +14,11 @@ class NetzkeConfig < Thor::Group
 
   class_option :extjs, :type => :string, :default => nil, :desc => 'location of ExtJS 3.x.x library', :optional => true
 
+  class_option :account, :type => :string, :default => 'skozlov', :desc => 'Github account to get Netzke plugins from', :optional => true
   class_option :overwrite_all, :type => :boolean, :default => false, :desc => 'force overwrite of all files, including existing modules and links', :optional => true
   class_option :overwrite_links, :type => :boolean, :default => true, :desc => 'force overwrite of symbolic links', :optional => true  
 
-  NETKE_GITHUB = 'http://github.com/skozlov'
+  GITHUB = 'http://github.com/skozlov'
 
   def main
     exit(-1) if !valid_context?
@@ -73,7 +74,7 @@ class NetzkeConfig < Thor::Group
     
   def create_module module_name
     # create dir for module by cloning
-    run "git clone #{NETKE_GITHUB}/#{module_name}.git #{module_name}" 
+    run "git clone #{netzke_github}/#{module_name}.git #{module_name}" 
     inside module_name do
       run "git checkout rails3"
     end
@@ -107,6 +108,10 @@ class NetzkeConfig < Thor::Group
   end
 
   private
+
+  def netzke_github
+    "#{GITHUB}/#{options[:account]}"
+  end  
 
   def netzke_app?
     File.directory? 'lib/netzke'
