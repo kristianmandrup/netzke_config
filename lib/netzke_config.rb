@@ -69,7 +69,7 @@ class NetzkeConfig < Thor::Group
   def create_module module_name
     empty_directory module_name
     inside module_name do
-      run "git clone #{NETKE_GITHUB}/#{module_name}" 
+      run "git clone #{NETKE_GITHUB}/#{module_name}.git" 
       run "git checkout rails3"
     end
   end
