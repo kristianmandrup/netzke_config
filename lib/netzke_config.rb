@@ -58,7 +58,7 @@ class NetzkeConfig < Thor::Group
   end
 
   def set_module_config name, module_options = {}
-    puts "set_module_config: #{name}, #{options.inspect}"
+    puts "set_module_config: #{name}, #{module_options.inspect}"
     mconfig = modules_config[name] = {}
     if options[name]
       configs = options[name].split('@')      
@@ -82,7 +82,7 @@ class NetzkeConfig < Thor::Group
   end
 
   def get_module_names
-    ["netzke-core", "netzke-basepack"].merge modules_config.keys.map{|k| k.to_s}    
+    ["netzke-core", "netzke-basepack"] | modules_config.keys.map{|k| k.to_s}    
   end
   
   def configure_modules  
