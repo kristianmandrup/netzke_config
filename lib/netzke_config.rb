@@ -54,6 +54,7 @@ class NetzkeConfig < Thor::Group
     all_modules << default_module_specs 
     all_modules << options[:modules]
     @module_specifications = all_modules.join(',') || ""
+    module_specifications.chomp! if module_specifications[0] == ','
   end
 
   def define_modules
@@ -62,7 +63,6 @@ class NetzkeConfig < Thor::Group
     
     puts "module_specifications: #{module_specifications}"
     module_defs = module_specifications.split(",")
-    
     module_defs.each do |module_spec|
       module_spec = module_spec.strip
       if module_spec && !module_spec.empty?
