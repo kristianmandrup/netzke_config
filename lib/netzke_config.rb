@@ -43,7 +43,8 @@ class NetzkeConfig < Thor::Group
     config_file = options[:config_file] 
     config_file.gsub! /^~/, ENV['HOME']
     if File.exists?(config_file)
-      default_module_specs = File.open(config_file).read
+      default_module_specs = File.open(config_file).read 
+      puts "default_module_specs: '#{default_module_specs}'"
     else
       say "module config file at #{config_file} not found"
     end
@@ -54,6 +55,7 @@ class NetzkeConfig < Thor::Group
     all_modules = []         
     all_modules << default_module_specs if default_module_specs && !default_module_specs.empty?
     all_modules << options[:modules]
+    puts "all modules: #{all_modules}"
     @module_specifications = all_modules.join(',') || ""
   end
 
