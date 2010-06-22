@@ -60,14 +60,14 @@ class NetzkeConfig < Thor::Group
   def set_module_config name, module_options = {}
     puts "set_module_config: #{name}, #{module_options.inspect}"
     mconfig = modules_config[name] = {}
-    if options[name]
+#    if options[name]
       # configs = options[:"netzke-#{name}"].split('@')      
       # mconfig[:branch]  = module_options[:branch] || configs[0] || options[:branch]
       # mconfig[:account] = module_options[:branch] || configs[1] || options[:account]
 
       mconfig[:branch]  = module_options[:branch] || options[:branch]
       mconfig[:account] = module_options[:account] || options[:account]
-    end         
+#    end         
   end
 
   def module_config name 
