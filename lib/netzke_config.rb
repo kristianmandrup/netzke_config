@@ -40,7 +40,8 @@ class NetzkeConfig < Thor::Group
 
   def load_config_file     
     @default_module_specs = ""
-    config_file = options[:config_file]
+    config_file = options[:config_file] 
+    config_file.gsub! /^~/, ENV['HOME']
     if File.exists?(config_file)
       default_module_specs = File.open(config_file).read
     else
@@ -134,8 +135,9 @@ class NetzkeConfig < Thor::Group
 
   def update_module module_name 
     config = module_config(module_name)          
-    inside module_name do 
-      branch = config[:branch]
+    return if !config
+    inside module_name do      
+      branch = config[:branch] 
       run "git checkout #{branch}"
       run "git rebase origin/#{branch}" 
       run "git pull" 
@@ -145,6 +147,7 @@ class NetzkeConfig < Thor::Group
   def create_module module_name
     # create dir for module by cloning  
     config = module_config(module_name)    
+    return if !config    
     account = config[:account]    
     run "git clone #{github account}/#{module_name}.git #{module_name}" 
     inside module_name do   
