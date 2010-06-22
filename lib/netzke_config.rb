@@ -15,8 +15,10 @@ class NetzkeConfig < Thor::Group
   class_option :extjs, :type => :string, :default => nil, :desc => 'location of ExtJS 3.x.x library'
 
   class_option :account, :type => :string, :default => 'skozlov', :desc => 'Github account to get Netzke plugins from'
-  class_option :overwrite_all, :type => :boolean, :default => false, :desc => 'force overwrite of all files, including existing modules and links'
-  class_option :overwrite_links, :type => :boolean, :default => true, :desc => 'force overwrite of symbolic links'
+  class_option :force_all, :type => :boolean, :default => false, :desc => 'Force force of all files, including existing modules and links'
+  class_option :force_links, :type => :boolean, :default => true, :desc => 'Force force of symbolic links' 
+  class_option :ext_version, :type => :string, :default => '3.2.1', :desc => 'ExtJS version to download'
+  class_option :download, :type => :boolean, :default => false, :desc => 'Download ExtJS if not found in specified extjs location'
 
   GITHUB = 'http://github.com'
 
@@ -49,14 +51,14 @@ class NetzkeConfig < Thor::Group
 
   def create_module_container_dir
     if File.directory?(location)
-      run "rm -rf #{location}" if options[:overwrite_all]      
+      run "rm -rf #{location}" if options[:force_all]      
     end
     empty_directory "#{location}" if !File.directory?(location)
   end
 
 
   def get_module module_name   
-    run "rm -rf #{module_name}" if options[:overwrite_all]    
+    run "rm -rf #{module_name}" if options[:force_all]    
     if File.directory? module_name
       update_module module_name
     else
@@ -83,7 +85,7 @@ class NetzkeConfig < Thor::Group
   def config_netzke_plugin module_name
     inside 'vendor/plugins' do
       module_src = local_module_src(module_name) 
-      run "rm -f #{module_name}" if options[:overwrite_links]
+      run "rm -f #{module_name}" if options[:force_links]
       run "ln -s #{module_src} #{module_name}"
     end
   end
@@ -91,23 +93,32 @@ class NetzkeConfig < Thor::Group
   def configure_extjs
     extjs_dir = options[:extjs]
     if !File.directory? extjs_dir
-      say "No directory for extjs found at #{extjs_dir}", :red 
-      return
-    else
-      inside extjs_dir do                
-        if !File.exist? 'ext-all.js'
-          say "Directory  #{extjs_dir} does not appear to contain a valid ExtJS library. File 'ext-all.js' missing.", :red
-          return
-        end
+      say "No directory for extjs found at #{extjs_dir}", :red        
+      extjs_dir = download_extjs if options[:download]
+    end      
+    
+    return if !File.directory(extjs_dir)
+    
+    inside extjs_dir do                
+      if !File.exist? 'ext-all.js'
+        say "Directory  #{extjs_dir} does not appear to contain a valid ExtJS library. File 'ext-all.js' missing.", :red
+        return
       end
-      inside 'public' do     
-        run "rm -f extjs" if options[:overwrite_links]        
-        run "ln -s #{extjs_dir} extjs"    
-      end
+    end
+    inside 'public' do     
+      run "rm -f extjs" if options[:force_links]        
+      run "ln -s #{extjs_dir} extjs"    
     end
   end
 
   private
+
+  def download_extjs 
+    extjs_dir = options[:extjs]
+    run "mkdir -p #{extjs_dir}"
+    run %Q{ cd #{extjs_dir} && curl -s -o extjs.zip "http://www.extjs.com/deploy/ext-#{ext_version}.zip" && unzip -q extjs.zip && rm extjs.zip }    
+    File.join(extjs_dir, extjs)
+  end
 
   def netzke_github
     "#{GITHUB}/#{options[:account]}"
