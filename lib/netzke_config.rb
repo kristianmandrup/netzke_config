@@ -80,7 +80,7 @@ class NetzkeConfig < Thor::Group
   end
 
   def default_modules 
-    return [] if default_module_specs
+    return [] if default_module_specs && !default_module_specs.strip.empty?
     ["netzke-core", "netzke-basepack"]    
   end
 
