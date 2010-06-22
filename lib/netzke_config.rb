@@ -14,16 +14,14 @@ class NetzkeConfig < Thor::Group
 
   class_option :extjs, :type => :string, :desc => 'location of extjs', :optional => true
 
+  class_option :overwrite, :type => :boolean, :default => false, :desc => 'force overwrite of existing modules if present', :optional => true
+
   NETKE_GITHUB = 'http://github.com/skozlov'
 
   def main
     exit(-1) if !valid_context?
-    create_module_container_dir
-    clone_modules
-    checkout_rails3
-    pull_changes
-    create_symlinks 
-    config_extjs if options[:extjs] 
+    configure_modules
+    configure_extjs if options[:extjs] 
   end   
 
   protected
@@ -37,11 +35,8 @@ class NetzkeConfig < Thor::Group
     end
   end
   
-  def create_module_container_dir  
-    empty_directory "#{location}"
-  end
-
-  def clone_modules  
+  def configure_modules  
+    create_module_container_dir  
     inside "#{location}" do
       ["netzke-core", "netzke-basepack"].each do |module_name|
         get_module module_name
@@ -49,6 +44,15 @@ class NetzkeConfig < Thor::Group
       end        
     end
   end
+
+  def create_module_container_dir
+    if File.directory?(location)
+      FileUtils.rm_rf location if options[:overwrite] 
+      return
+    end
+    empty_directory "#{location}"
+  end
+
 
   def get_module module_name
     if File.directory? module_name
@@ -81,7 +85,7 @@ class NetzkeConfig < Thor::Group
     end
   end
 
-  def config_extjs
+  def configure_extjs
     extjs_dir = options[:extjs]
     if !File.directory? extjs_dir
       say "No directory for extjs found at #{extjs_dir}", :red 
@@ -94,7 +98,7 @@ class NetzkeConfig < Thor::Group
         end
       end
       inside 'public' do    
-        run "ln -s #{options[:extjs]} extjs"    
+        run "ln -s #{extjs_dir} extjs"    
       end
     end
   end
