@@ -21,16 +21,41 @@ class NetzkeConfig < Thor::Group
   class_option :ext_version, :type => :string, :default => '3.2.1', :desc => 'ExtJS version to download'
   class_option :download, :type => :boolean, :default => false, :desc => 'Download ExtJS if not found in specified extjs location'
 
+  class_option :basepack, :type => :string, :desc => 'Github branch and account specification for basepack module, fx rails3@kmandrup'
+  class_option :core, :type => :string, :desc => 'Github branch and account specification for core module, fx master@skozlov'
+
   GITHUB = 'http://github.com'
 
-  def main
+  def main  
+    config_vars
     exit(-1) if !valid_context?
     configure_modules
     configure_extjs if options[:extjs] 
   end   
 
   protected
+  attr_accessor :modules_config
 
+  def config_vars       
+    @modules_config = {}
+    set_module_config :basepack 
+    set_module_config :core 
+  end
+
+  def set_module_config name
+    mconfig = modules_config[name] = {}
+    if options[name]      
+      configs = options[name].split('@')      
+      mconfig[:branch] = configs[0] || options[:branch]
+      mconfig[:account] = configs[1] || options[:account]
+    end         
+  end
+
+  def module_config name
+    module_key = name.to_sym
+    modules_config[module_key]
+  end
+  
   def valid_context?
     if netzke_app? && rails3_app?
       true
@@ -67,8 +92,10 @@ class NetzkeConfig < Thor::Group
     end
   end
 
-  def update_module module_name
-    inside module_name do
+  def update_module module_name 
+    config = module_config(module_name)          
+    inside module_name do 
+      branch = config[:branch]
       run "git checkout #{branch}"
       run "git rebase origin/#{branch}" 
       run "git pull" 
@@ -76,9 +103,12 @@ class NetzkeConfig < Thor::Group
   end
     
   def create_module module_name
-    # create dir for module by cloning
-    run "git clone #{netzke_github}/#{module_name}.git #{module_name}" 
-    inside module_name do
+    # create dir for module by cloning  
+    config = module_config(module_name)    
+    account = config[:account]    
+    run "git clone #{netzke_github account}/#{module_name}.git #{module_name}" 
+    inside module_name do   
+      branch = config[:branch]      
       run "git checkout #{branch}"
     end
   end
@@ -137,8 +167,8 @@ class NetzkeConfig < Thor::Group
     File.join(extjs_dir, extjs)
   end
 
-  def netzke_github
-    "#{GITHUB}/#{options[:account]}"
+  def netzke_github account
+    "#{GITHUB}/#{account}"
   end  
 
   def netzke_app?
