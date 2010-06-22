@@ -63,8 +63,13 @@ class NetzkeConfig < Thor::Group
     
     module_defs.each do |module_spec|
       spec = module_spec.strip.split(":")
-      module_name = spec[0] 
-      branch, account = spec[1].split("@")            
+      module_name = spec[0]
+      if spec[1]
+        branch, account = spec[1].split("@")            
+      else
+        branch, account = spec[0].split("@") if spec[0]
+        branch, account = "", "" if !spec[0]
+      end
       set_module_config module_name.to_sym, :branch => branch, :account => account
     end
   end
