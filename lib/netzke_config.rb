@@ -87,12 +87,15 @@ class NetzkeConfig < Thor::Group
   end
   
   def valid_context?
-    if netzke_app? && rails3_app?
-      true
-    else
-      say "Must be run from a Netzke rails3 application root directory", :red      
-      false
+    if !rails3_app?
+      say "Must be run from a rails 3 application root directory", :red      
+      return false
+    end      
+    if !netzke_app?
+      say "Not sure if this is a netzke application root directory. lib/netzke missing", :yellow      
+      return true
     end
+    true
   end
 
   def get_module_names
