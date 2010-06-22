@@ -45,6 +45,8 @@ class NetzkeConfig < Thor::Group
     config_file = options[:config_file]
     if File.exists?(config_file)
       default_module_specs = File.open(config_file).read
+    else
+      say "module config file at #{config_file} not found"
     end
   end
 
