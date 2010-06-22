@@ -14,7 +14,7 @@ class NetzkeConfig < Thor::Group
 
   class_option :extjs, :type => :string, :desc => 'location of extjs', :optional => true
 
-  NETKE_GITHUB = 'http://github.com/skozlov/'
+  NETKE_GITHUB = 'http://github.com/skozlov'
 
   def main
     exit(-1) if !valid_context?
