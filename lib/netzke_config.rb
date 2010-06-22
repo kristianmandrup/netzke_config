@@ -14,6 +14,7 @@ class NetzkeConfig < Thor::Group
 
   class_option :extjs, :type => :string, :default => nil, :desc => 'location of ExtJS 3.x.x library'
 
+  class_option :branch, :type => :string, :default => 'rails3', :desc => 'Branch to use for netzke modules'
   class_option :account, :type => :string, :default => 'skozlov', :desc => 'Github account to get Netzke plugins from'
   class_option :force_all, :type => :boolean, :default => false, :desc => 'Force force of all files, including existing modules and links'
   class_option :force_links, :type => :boolean, :default => true, :desc => 'Force force of symbolic links' 
@@ -68,8 +69,8 @@ class NetzkeConfig < Thor::Group
 
   def update_module module_name
     inside module_name do
-      run "git checkout rails3"
-      run "git rebase origin/rails3" 
+      run "git checkout #{branch}"
+      run "git rebase origin/#{branch}" 
       run "git pull" 
     end
   end
@@ -78,7 +79,7 @@ class NetzkeConfig < Thor::Group
     # create dir for module by cloning
     run "git clone #{netzke_github}/#{module_name}.git #{module_name}" 
     inside module_name do
-      run "git checkout rails3"
+      run "git checkout #{branch}"
     end
   end
 
