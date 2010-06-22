@@ -6,16 +6,16 @@ class NetzkeConfig < Thor::Group
   include Thor::Actions
 
   # group used when displaying thor tasks with: thor list or thor -T
-  group :netzke
+  # group :netzke
 
   # Define arguments 
   argument :location, :type => :string, :default => '~/netzke/modules', :desc => 'location where netzke modules are stored' 
   # argument :my_arg_name, :type (:string, :hash, :array, :numeric), :default, :required, :optional, :desc, :banner
 
-  class_option :extjs, :type => :string, :desc => 'location of extjs', :optional => true
+  class_option :extjs, :type => :string, :default => nil, :desc => 'location of ExtJS 3.x.x library', :optional => true
 
   class_option :overwrite_all, :type => :boolean, :default => false, :desc => 'force overwrite of all files, including existing modules and links', :optional => true
-  class_option :overwrite_links, :type => :boolean, :default => false, :desc => 'force overwrite of symbolic links', :optional => true  
+  class_option :overwrite_links, :type => :boolean, :default => true, :desc => 'force overwrite of symbolic links', :optional => true  
 
   NETKE_GITHUB = 'http://github.com/skozlov'
 
