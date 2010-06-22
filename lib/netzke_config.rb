@@ -49,7 +49,7 @@ class NetzkeConfig < Thor::Group
     return if !options[:modules]
     module_defs = options[:modules].split(",")
     
-    options[:modules].each do |module_spec|
+    module_defs.each do |module_spec|
       spec = module_spec.strip.split(":")
       module_name = spec[0] 
       branch, account = spec[1].split("@")            
