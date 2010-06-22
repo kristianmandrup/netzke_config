@@ -23,11 +23,13 @@ class NetzkeConfig < Thor::Group
 
   class_option :basepack, :type => :string, :desc => 'Github branch and account specification for basepack module, fx rails3@kmandrup'
   class_option :core, :type => :string, :desc => 'Github branch and account specification for core module, fx master@skozlov'
+  class_option :modules, :type => :string, :desc => 'module specifications for each module, fx neztke_ar:master@skozlov,netzke_core:rails3@kmandrup'
 
   GITHUB = 'http://github.com'
 
   def main  
-    config_vars
+    define_vars
+    define_modules
     exit(-1) if !valid_context?
     configure_modules
     configure_extjs if options[:extjs] 
@@ -36,18 +38,31 @@ class NetzkeConfig < Thor::Group
   protected
   attr_accessor :modules_config
 
-  def config_vars       
-    @modules_config = {}
+  def define_vars       
+    @modules_config ||= {}
     set_module_config :basepack 
     set_module_config :core 
   end
 
-  def set_module_config name
+  def define_modules
+    @modules_config ||= {}
+    return if !options[:modules]
+    module_defs = options[:modules].split(",")
+    
+    options[:modules].each do |module_spec|
+      spec = = module_spec.strip.split(":")
+      module_name = spec[0] 
+      branch, account = spec[1].split("@")            
+      set_module_config module_name.to_sym, :branch => branch, :account => account
+    end
+  end
+
+  def set_module_config name, module_options = {}
     mconfig = modules_config[name] = {}
     if options[name]      
       configs = options[name].split('@')      
-      mconfig[:branch] = configs[0] || options[:branch]
-      mconfig[:account] = configs[1] || options[:account]
+      mconfig[:branch] = configs[0] || module_options[:branch] || options[:branch]
+      mconfig[:account] = configs[1] || module_options[:branch] || options[:account]
     end         
   end
 
