@@ -58,17 +58,18 @@ class NetzkeConfig < Thor::Group
   end
 
   def set_module_config name, module_options = {}
+    puts "set_module_config: #{name}, #{options.inspect}"
     mconfig = modules_config[name] = {}
-    if options[name]      
+    if options[name]
       configs = options[name].split('@')      
       mconfig[:branch] = configs[0] || module_options[:branch] || options[:branch]
       mconfig[:account] = configs[1] || module_options[:branch] || options[:account]
     end         
   end
 
-  def module_config name
-    module_key = name.to_sym
-    modules_config[module_key]
+  def module_config name 
+    puts "module_config: #{name}, #{modules_config.inspect}"
+    modules_config[name.to_sym]
   end
   
   def valid_context?
@@ -79,11 +80,15 @@ class NetzkeConfig < Thor::Group
       false
     end
   end
+
+  def get_module_names
+    ["netzke-core", "netzke-basepack"].merge modules_config.keys.map{|k| k.to_s}    
+  end
   
   def configure_modules  
     create_module_container_dir  
     inside "#{location}" do
-      ["netzke-core", "netzke-basepack"].each do |module_name|
+      get_module_names.each do |module_name|
         get_module module_name
         config_netzke_plugin module_name
       end        
