@@ -9,10 +9,10 @@ class NetzkeConfig < Thor::Group
   # group :netzke
 
   # Define arguments 
-  argument :location, :type => :string, :default => '~/netzke/modules', :desc => 'location where netzke modules are stored' 
+  argument :location, :type => :string, :default => '~/netzke/modules', :desc => 'Location where netzke modules are to be stored (locally)' 
   # argument :my_arg_name, :type (:string, :hash, :array, :numeric), :default, :required, :optional, :desc, :banner
 
-  class_option :extjs, :type => :string, :default => nil, :desc => 'location of ExtJS 3.x.x library'
+  class_option :extjs, :type => :string, :default => nil, :desc => 'Location of ExtJS 3.x.x library'
 
   class_option :branch, :type => :string, :default => 'rails3', :desc => 'Branch to use for netzke modules'
   class_option :account, :type => :string, :default => 'skozlov', :desc => 'Github account to get Netzke plugins from'
@@ -23,11 +23,13 @@ class NetzkeConfig < Thor::Group
 
   # class_option :basepack, :type => :string, :desc => 'Github branch and account specification for basepack module, fx rails3@kmandrup'
   # class_option :core, :type => :string, :desc => 'Github branch and account specification for core module, fx master@skozlov'
-  class_option :modules, :type => :string, :desc => 'module specifications for each module, fx neztke_ar:master@skozlov,netzke_core:rails3@kmandrup'
+  class_option :modules, :type => :string, :desc => 'Module specifications for each module, fx neztke_ar:master@skozlov,netzke_core:rails3@kmandrup'
+  class_option :config_file, :default => '~/netzke/modules.config', :type => :string, :desc => 'Location of config file for default module specifications' 
 
   GITHUB = 'http://github.com'
 
   def main  
+    load_config_file
     setup_defaults
     define_modules
     exit(-1) if !valid_context?
@@ -36,24 +38,25 @@ class NetzkeConfig < Thor::Group
   end   
 
   protected
-  attr_accessor :modules_config
+  attr_accessor :modules_config, :module_specifications, :default_module_specs
 
-  def default_modules 
-    ["netzke-core", "netzke-basepack"]    
+  def load_config_file     
+    @default_module_specs = ""
+    config_file = options[:config_file]
+    if File.exists?(config_file)
+      default_module_specs = File.open(config_file).read
+    end
   end
 
   def setup_defaults       
-    @modules_config ||= {}
-    default_modules.each do |module_name|
-      set_module_config 'netzke-basepack'
-      set_module_config 'netzke-core' 
-    end
+    @modules_config ||= {} 
+    @module_specifications = default_module_specs << options[:modules] || ""
   end
 
   def define_modules
     @modules_config ||= {}
-    return if !options[:modules]
-    module_defs = options[:modules].split(",")
+    return if !module_specifications
+    module_defs = module_specifications.split(",")
     
     module_defs.each do |module_spec|
       spec = module_spec.strip.split(":")
@@ -61,6 +64,11 @@ class NetzkeConfig < Thor::Group
       branch, account = spec[1].split("@")            
       set_module_config module_name.to_sym, :branch => branch, :account => account
     end
+  end
+
+  def default_modules 
+    return [] if default_module_specs
+    ["netzke-core", "netzke-basepack"]    
   end
 
   def set_module_config name, module_options = {}
@@ -127,7 +135,7 @@ class NetzkeConfig < Thor::Group
     # create dir for module by cloning  
     config = module_config(module_name)    
     account = config[:account]    
-    run "git clone #{netzke_github account}/#{module_name}.git #{module_name}" 
+    run "git clone #{github account}/#{module_name}.git #{module_name}" 
     inside module_name do   
       branch = config[:branch]      
       run "git checkout #{branch}"
@@ -188,7 +196,7 @@ class NetzkeConfig < Thor::Group
     File.join(extjs_dir, extjs)
   end
 
-  def netzke_github account
+  def github account
     "#{GITHUB}/#{account}"
   end  
 
