@@ -17,7 +17,7 @@ class NetzkeConfig < Thor::Group
   NETKE_GITHUB = 'http://github.com/skozlov/'
 
   def main
-    check_valid_context
+    exit(-1) if !valid_context?
     create_module_container_dir
     clone_modules
     checkout_rails3
@@ -28,10 +28,12 @@ class NetzkeConfig < Thor::Group
 
   protected
 
-  def check_valid_context
+  def valid_context?
     if netzke_app? && rails3_app?
-      say "Must be run from a Netzke rails3 application root directory", :red
-      exit -1
+      true
+    else
+      say "Must be run from a Netzke rails3 application root directory", :red      
+      false
     end
   end
   
