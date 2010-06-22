@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{netzke_config}
-  s.version = "0.1.3"
+  s.version = "0.2.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Kristian Mandrup"]
@@ -28,6 +28,7 @@ Gem::Specification.new do |s|
      "bin/netzke_config.bat",
      "lib/netzke_config.rb",
      "lib/netzke_config.thor",
+     "netzke_config.gemspec",
      "spec/netzke_config_spec.rb",
      "spec/spec.opts",
      "spec/spec_helper.rb",
