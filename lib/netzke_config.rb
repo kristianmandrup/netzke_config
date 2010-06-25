@@ -227,7 +227,7 @@ class NetzkeConfig < Thor::Group
   end
 
   def local_module_src module_name
-    "#{options[:location]}/#{module_name}"
+    "#{location}/#{module_name}"
   end
   
 end
