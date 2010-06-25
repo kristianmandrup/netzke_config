@@ -194,7 +194,7 @@ class NetzkeConfig < Thor::Group
       end
     end
           
-    inside application_dir    
+    inside application_dir do   
       inside 'public' do     
         run "rm -f extjs" if force_links?        
         run "ln -s #{extjs_dir} extjs"    
