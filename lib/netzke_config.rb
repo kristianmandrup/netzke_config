@@ -33,7 +33,7 @@ class NetzkeConfig < Thor::Group
   GITHUB = 'http://github.com'
 
   def main 
-    application_dir = Dir.pwd
+    @application_dir = Dir.pwd
     load_config_file
     setup_defaults
     define_modules
