@@ -32,7 +32,8 @@ class NetzkeConfig < Thor::Group
 
   GITHUB = 'http://github.com'
 
-  def main  
+  def main 
+    application_dir = Dir.pwd
     load_config_file
     setup_defaults
     define_modules
@@ -42,7 +43,7 @@ class NetzkeConfig < Thor::Group
   end   
 
   protected
-  attr_accessor :modules_config, :module_specifications, :default_module_specs
+  attr_accessor :modules_config, :module_specifications, :default_module_specs, :application_dir
 
   def load_config_file     
     @default_module_specs = ""
@@ -165,13 +166,15 @@ class NetzkeConfig < Thor::Group
   end
 
   def config_netzke_plugin module_name
-    inside 'vendor/plugins' do
-      module_src = local_module_src(module_name)               
-      if !force_links? && File.exist?(module_name)      
-        say "File or link vendor/plugins/#{module_name} already exists", :yellow
+    inside application_dir do
+      inside 'vendor/plugins' do
+        module_src = local_module_src(module_name)               
+        if !force_links? && File.exist?(module_name)      
+          say "File or link vendor/plugins/#{module_name} already exists", :yellow
+        end
+        run "rm -rf #{module_name}" if force_links?
+        run "ln -s #{module_src} #{module_name}"
       end
-      run "rm -rf #{module_name}" if force_links?
-      run "ln -s #{module_src} #{module_name}"
     end
   end
 
@@ -190,9 +193,12 @@ class NetzkeConfig < Thor::Group
         return
       end
     end
-    inside 'public' do     
-      run "rm -f extjs" if force_links?        
-      run "ln -s #{extjs_dir} extjs"    
+          
+    inside application_dir    
+      inside 'public' do     
+        run "rm -f extjs" if force_links?        
+        run "ln -s #{extjs_dir} extjs"    
+      end
     end
   end
 
