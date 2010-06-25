@@ -166,8 +166,11 @@ class NetzkeConfig < Thor::Group
 
   def config_netzke_plugin module_name
     inside 'vendor/plugins' do
-      module_src = local_module_src(module_name) 
-      run "rm -f #{module_name}" if force_links?
+      module_src = local_module_src(module_name)               
+      if !force_links? && File.exist?(module_name)      
+        say "File or link vendor/plugins/#{module_name} already exists", :yellow
+      end
+      run "rm -rf #{module_name}" if force_links?
       run "ln -s #{module_src} #{module_name}"
     end
   end
